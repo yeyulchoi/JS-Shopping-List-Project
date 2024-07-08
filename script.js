@@ -17,28 +17,28 @@ function addItem(e){
     //create new items
 
     const li=document.createElement('li');
-    li.innerHTML=`
-          ${newItem}
-          <button class="remove-item btn-link text-red">
-            <i class="fa-solid fa-xmark"></i>
-          </button>`
-     
-
+    li.appendChild(document.createTextNode(newItem))
+    const newIcon= createIcon('fa-solid fa-xmark');   
+    const btn= createButtton('remove-item btn-link text-red');
+    
+    li.appendChild(btn);
     itemList.appendChild(li);
 
-
-    itemInput.value=''
-
-
-
-
-
-
-    // itemList.forEach(item=>{
-    //     if(newItem===item){
-    //         itemList.remove(item)
-    //     }
-    // })
+    function createButtton(classes){
+       const newBtn= document.createElement('button');
+       newBtn.className=classes;
+       newBtn.appendChild(newIcon)
+       return newBtn;
+    }
+    
+    function createIcon(iconClass){
+        const i=document.createElement('i');
+        i.className=iconClass;
+        return i
+    }
+   
+    itemInput.value='';
+   
 }
 
 
