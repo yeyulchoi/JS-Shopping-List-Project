@@ -1,11 +1,16 @@
 const itemForm=document.getElementById('item-form');
 const itemInput=document.getElementById('item-input');
 const itemList=document.getElementById('item-list');
-const listItems= document.querySelectorAll('li');
-const clearBtn=document.getElementById('clear')
+
+const clearBtn=document.getElementById('clear');
+const filter=document.getElementById('filter');
 
 
-console.log(itemList);
+
+
+
+
+
 
 
 function addItem(e){
@@ -25,8 +30,7 @@ function addItem(e){
     const newIcon= createIcon('fa-solid fa-xmark');   
     const btn= createButtton('remove-item btn-link text-red');
     
-    li.appendChild(btn);
-    itemList.appendChild(li);
+   
 
     function createButtton(classes){
        const newBtn= document.createElement('button');
@@ -40,25 +44,48 @@ function addItem(e){
         i.className=iconClass;
         return i
     }
-   
+    li.appendChild(btn);
+    itemList.appendChild(li);
+    checkUI();
     itemInput.value='';
    
 }
 function removeItem(e){
     if(e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')){
+       if(confirm("Are you sure")){
         e.target.closest('li').remove();
+       }
+       
+             
      }
+     checkUI();
+}
+function clearAll(){
+   while(itemList.firstChild){
+    itemList.firstChild.remove()
+   }   
+    
+    checkUI();
 }
 
+function checkUI(){
+    const items= itemList.querySelectorAll('li');
+    console.log(items);
+    if (items.length===0){
+        filter.style.display='none';
+        clearBtn.style.display='none';
+    }else{
+        filter.style.display='block';
+        clearBtn.style.display='block';
+    }
 
+}
 
-
-
+checkUI();
 itemForm.addEventListener('submit',addItem);
 // remove Item method- 2: using classList
 itemList.addEventListener('click',removeItem)
-clearBtn.addEventListener('click',e=>itemList.remove())
-
+clearBtn.addEventListener('click',clearAll)
 
 
 // remove Item method- 1: using tagName
