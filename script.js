@@ -6,7 +6,15 @@ const filter=document.getElementById('filter');
 
 // console.log(itemList.children);// this is HTMLCollection. It is not a list...
 
-function addItem(e){
+function displayItems(){
+    const itemsFromStroage= getItemsFromStorage();
+    itemsFromStroage.forEach(item=>{
+        addItemToDOM(item)
+        checkUI()
+    })
+}
+
+function onAddItemSubmit(e){
     e.preventDefault();  //cos not actually submit in this app.
 
     //need to validate the input.
@@ -15,21 +23,28 @@ function addItem(e){
         alert("Please add an item")
         return; // return=> because we dont want anything to happen.
     }
-   
-    //create new items
+    addItemToDOM(newItem)
+    addItemToStorage(newItem)
+    displayLocalData()
 
-    const li=document.createElement('li');
-    li.appendChild(document.createTextNode(newItem))
-    // const newIcon= createIcon('fa-solid fa-xmark');   
-    const btn= createButtton('remove-item btn-link text-red');
-    
-    li.appendChild(btn);
-    itemList.appendChild(li);
+
     checkUI();
-    itemInput.value='';
+    // itemInput.value='';
    
 }
 
+function addItemToDOM(item){
+     //create new items
+     const li=document.createElement('li');
+     li.appendChild(document.createTextNode(item))
+     // const newIcon= createIcon('fa-solid fa-xmark');   
+     const btn= createButtton('remove-item btn-link text-red');
+     
+     li.appendChild(btn);
+     itemList.appendChild(li);
+     itemInput.value='';
+
+}
 
 function createButtton(classes){
     const newBtn= document.createElement('button');
@@ -42,20 +57,72 @@ function createIcon(iconClass){
     i.className=iconClass;
     return i
 }
-function removeItem(e){
-    if(e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')){
-       if(confirm("Are you sure")){
-        e.target.closest('li').remove()
-        checkUI()
-    }}    
+
+function addItemToStorage(item){
+    const itemsFromStroage=getItemsFromStorage();
+
+    itemsFromStroage.push(item);
+
+    //Convert to JSON string and set to local storage
+    localStorage.setItem('items',JSON.stringify(itemsFromStroage))
 }
+
+
+function getItemsFromStorage(){
+    
+    let itemsFromStroage;
+
+    if (localStorage.getItem('items')===null){
+        itemsFromStroage=[];
+    }else{
+        itemsFromStroage=JSON.parse(localStorage.getItem('items'));
+    }
+
+    return itemsFromStroage
+}
+
+
+function onClickItem(e){
+    if(e.target.parentElement.classList.contains('remove-item')){
+        removeItem(e.target.parentElement.parentElement);
+    }
+   }
+
+function removeItem(item){
+    if(confirm('Are you Sure?')){
+        //remove item from DOM        
+        item.remove()
+        //remove item from storage
+        removeItemFromStorage(item.textContent);
+
+        checkUI();
+    }
+   
+}
+
+function removeItemFromStorage(content){
+    let itemsFromStorage = getItemsFromStorage();
+    
+    //Filter out item to be removed
+    itemsFromStorage = itemsFromStorage.filter((i)=>i !==content);
+
+    //Re-set to localstorage
+    localStorage.setItem('items',JSON.stringify(itemsFromStorage));
+    
+}
+
 function clearAll(){
    while(itemList.firstChild){
     itemList.firstChild.remove()
    }   
+
+   // clear from localStorage
+   localStorage.removeItem('items');
     
     checkUI();
 }
+
+
 
 function filterItems(e){
     const text=e.target.value.toLowerCase();
@@ -65,15 +132,15 @@ function filterItems(e){
         
         if(itemName.indexOf(text)!==-1){
             item.style.display='flex';
-            console.log(true);
+            // console.log(true);
         }else{
             item.style.display='none';
-            console.log(false);
+            // console.log(false);
         }
 
         
     })
-    console.log(text);
+    // console.log(text);
 }
 function checkUI(){
     const items= itemList.querySelectorAll('li');  //note: if using ...tagName('li')which is old style
@@ -89,16 +156,19 @@ function checkUI(){
 
 }
 
-checkUI();
+function init(){
+    checkUI();
 
-//Event Listener
-itemForm.addEventListener('submit',addItem);
-// remove Item method- 2: using classList
-itemList.addEventListener('click',removeItem)
-clearBtn.addEventListener('click',clearAll)
-filter.addEventListener('input',filterItems);
+    //Event Listener
+    itemForm.addEventListener('submit',onAddItemSubmit);
+    // remove Item method- 2: using classList
+    itemList.addEventListener('click',onClickItem)
+    clearBtn.addEventListener('click',clearAll)
+    filter.addEventListener('input',filterItems);
+    document.addEventListener('DOMContentLoaded',displayItems)
+}
 
-
+init()
 
 
 
