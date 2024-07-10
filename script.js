@@ -20,28 +20,27 @@ function addItem(e){
 
     const li=document.createElement('li');
     li.appendChild(document.createTextNode(newItem))
-    const newIcon= createIcon('fa-solid fa-xmark');   
+    // const newIcon= createIcon('fa-solid fa-xmark');   
     const btn= createButtton('remove-item btn-link text-red');
     
-   
-
-    function createButtton(classes){
-       const newBtn= document.createElement('button');
-       newBtn.className=classes;
-       newBtn.appendChild(newIcon)
-       return newBtn;
-    }
-    
-    function createIcon(iconClass){
-        const i=document.createElement('i');
-        i.className=iconClass;
-        return i
-    }
     li.appendChild(btn);
     itemList.appendChild(li);
     checkUI();
     itemInput.value='';
    
+}
+
+
+function createButtton(classes){
+    const newBtn= document.createElement('button');
+    newBtn.className=classes;
+    newBtn.appendChild(createIcon('fa-solid fa-xmark'))
+    return newBtn;
+ }
+function createIcon(iconClass){
+    const i=document.createElement('i');
+    i.className=iconClass;
+    return i
 }
 function removeItem(e){
     if(e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')){
@@ -90,8 +89,6 @@ function checkUI(){
 
 }
 
-
-
 checkUI();
 
 //Event Listener
@@ -99,7 +96,25 @@ itemForm.addEventListener('submit',addItem);
 // remove Item method- 2: using classList
 itemList.addEventListener('click',removeItem)
 clearBtn.addEventListener('click',clearAll)
-filter.addEventListener('input', filterItems);
+filter.addEventListener('input',filterItems);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // remove Item method- 1: using tagName
